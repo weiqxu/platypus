@@ -20,6 +20,7 @@
 #include "gpos/memory/CMemoryPool.h"
 #include "gpos/types.h"
 
+#define XERCES_CPP_NAMESPACE_USE using namespace XERCES_CPP_NAMESPACE;
 #endif	// GPOS_base_H
 
 // EOF

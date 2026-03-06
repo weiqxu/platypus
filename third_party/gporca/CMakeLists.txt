@@ -1,6 +1,6 @@
 # Copyright (c) 2015, VMware, Inc. or its affiliates.
 
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+#cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 project(gpopt_main LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -33,6 +33,16 @@ check_cxx_compiler_flag("-Werror" COMPILER_HAS_WERROR)
 if (COMPILER_HAS_WERROR)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
 endif()
+
+check_cxx_compiler_flag("-Wno-error=overloaded-virtual"
+                        COMPILER_HAS_WNO_ERROR_OVERLOADED_VIRTUAL)
+if (COMPILER_HAS_WNO_ERROR_OVERLOADED_VIRTUAL)
+  # Keep warnings visible while preventing this one from failing GPORCA builds.
+  SET(CMAKE_CXX_FLAGS
+      "${CMAKE_CXX_FLAGS} -Wno-error=overloaded-virtual")
+endif()
+
+add_compile_options(-Wno-c++20-compat)
 
 check_cxx_compiler_flag("-Wextra" COMPILER_HAS_WEXTRA)
 if (COMPILER_HAS_WEXTRA)

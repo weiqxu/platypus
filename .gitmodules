@@ -1,3 +1,6 @@
 [submodule "contrib/duckdb"]
 	path = contrib/duckdb
 	url = https://github.com/duckdb/duckdb.git
+[submodule "contrib/xerces-c"]
+	path = contrib/xerces-c
+	url = https://github.com/apache/xerces-c.git
