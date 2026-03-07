@@ -60,6 +60,22 @@ struct ConvertedQuery {
   gpmd::CMDNameArray *output_col_names = nullptr;
 };
 
+std::string GetDuckdbOriginalPhysicalPlan(duckdb::Connection &con, const std::string &sql) {
+  auto explain_result = con.Query("EXPLAIN " + sql);
+  if (!explain_result || explain_result->HasError()) {
+    return "<failed to get DuckDB EXPLAIN plan>";
+  }
+
+  auto &mat_result = explain_result->Cast<duckdb::MaterializedQueryResult>();
+  for (duckdb::idx_t row = 0; row < mat_result.RowCount(); row++) {
+    const auto key = mat_result.GetValue(0, row).ToString();
+    if (key == "physical_plan") {
+      return mat_result.GetValue(1, row).ToString();
+    }
+  }
+  return "<DuckDB EXPLAIN did not return physical_plan>";
+}
+
 ConvertedQuery BuildGporcaLogicalTreeFromSql(bool needs_projection,
                                                 gpos::CMemoryPool *mp,
                                                 gpopt::CMDAccessor *md_accessor,
@@ -283,6 +299,9 @@ int main() {
     std::cout << "AST:\n" << parser.statements[0]->ToString() << std::endl;
   }
 
+  std::cout << "DuckDB original optimizer physical plan:" << std::endl;
+  std::cout << GetDuckdbOriginalPhysicalPlan(con, sql) << std::endl;
+
   std::cout << "GPORCA direct conversion:" << std::endl;
   // For this demo query shape, SQL SELECT maps to a projection over a constant scan.
   const bool needs_projection = true;
@@ -294,6 +313,7 @@ int main() {
     return 1;
   }
 
+  std::cout << "DuckDB original optimizer execution result:" << std::endl;
   result->Print();
   return 0;
 }
