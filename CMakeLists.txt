@@ -44,3 +44,5 @@ endif()
 if(NOT PLATYPUS_BUILD_DUCKDB AND NOT PLATYPUS_BUILD_GPORCA AND NOT PLATYPUS_BUILD_XERCES)
   message(FATAL_ERROR "No build target selected. Enable one or more PLATYPUS_BUILD_* options.")
 endif()
+
+add_subdirectory(src)
